@@ -1,0 +1,18 @@
+﻿services:
+  postgres-db:
+    image: postgres:16
+    container_name: proyecto-dawa-tutoia-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: tutorias_academicas_ia
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/01-init.sql
+      - ./database/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql
+
+volumes:
+  postgres_data:
