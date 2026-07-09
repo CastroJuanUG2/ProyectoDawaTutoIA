@@ -1,5 +1,3 @@
-"use client";
-
 import { ProtectedLayout } from "@/components/layout/ProtectedLayout";
 import { AppShell } from "@/components/layout/AppShell";
 
@@ -8,28 +6,11 @@ export default function DocentePage() {
     <ProtectedLayout allowedRoles={["DOCENTE"]}>
       <AppShell>
         <section className="page-section">
-          <h2>Panel docente</h2>
+          <h2>Panel del docente</h2>
           <p>
-            Desde este módulo el docente podrá revisar solicitudes, atender
-            tutorías y registrar bitácoras de atención.
+            Aquí podrás revisar solicitudes asignadas, atender tutorías y
+            registrar bitácoras de seguimiento académico.
           </p>
-
-          <div className="dashboard-grid">
-            <div className="dashboard-card">
-              <h3>Solicitudes pendientes</h3>
-              <p>Consulta las solicitudes asignadas o disponibles.</p>
-            </div>
-
-            <div className="dashboard-card">
-              <h3>Atención de tutorías</h3>
-              <p>Confirma, atiende o cancela tutorías según corresponda.</p>
-            </div>
-
-            <div className="dashboard-card">
-              <h3>Bitácoras</h3>
-              <p>Registra observaciones y recomendaciones académicas.</p>
-            </div>
-          </div>
         </section>
       </AppShell>
     </ProtectedLayout>

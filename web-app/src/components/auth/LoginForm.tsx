@@ -1,78 +1,84 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Card } from "@/components/ui/Card";
+import { ApiResponse } from "@/types/api.types";
+import { getApiErrorMessage, logApiTrace } from "@/lib/utils/handleApiError";
 
 export function LoginForm() {
-  const { login, isLoading } = useAuth();
+  const router = useRouter();
+  const { login } = useAuth();
 
   const [correo, setCorreo] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [formError, setFormError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    setErrorMessage("");
+    setFormError("");
 
     if (!correo.trim() || !password.trim()) {
-      setErrorMessage("Ingresa tu correo y contraseña.");
+      setFormError("Ingrese correo y contraseña.");
       return;
     }
 
     try {
-      await login({
+      setIsSubmitting(true);
+
+      const redirectTo = await login({
         correo,
         password,
       });
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Error inesperado";
 
-      setErrorMessage("No se puedo ingresar, vuelva a intentarlo de nuevo COD_ERROR " +message);
+      router.push(redirectTo);
+    } catch (error) {
+      const apiError = error as ApiResponse<unknown>;
+
+      logApiTrace(apiError);
+      setFormError(getApiErrorMessage(apiError));
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
   return (
-    <form className="login-card" onSubmit={handleSubmit}>
+    <Card className="login-card">
       <div className="login-header">
-        <h1>Inicio de sesión</h1>
-        <p>Sistema de Tutorías Académicas con Agente de IA</p>
+        <h1>Sistema de Tutorías Académicas</h1>
+        <p>Ingrese sus credenciales para acceder al sistema.</p>
       </div>
 
-      <div className="form-group">
-        <label htmlFor="correo">Correo institucional</label>
-        <input
-          id="correo"
+      <form onSubmit={handleSubmit} className="login-form">
+        <Input
+          label="Correo institucional"
           type="email"
           value={correo}
           onChange={(event) => setCorreo(event.target.value)}
           placeholder="usuario@ug.edu.ec"
           autoComplete="email"
         />
-      </div>
 
-      <div className="form-group">
-        <label htmlFor="password">Contraseña</label>
-        <input
-          id="password"
+        <Input
+          label="Contraseña"
           type="password"
           value={password}
           onChange={(event) => setPassword(event.target.value)}
-          placeholder="Ingresa tu contraseña"
+          placeholder="Ingrese su contraseña"
           autoComplete="current-password"
         />
-      </div>
 
-      {errorMessage && (
-        <div className="error-message">
-          {errorMessage}
-        </div>
-      )}
+        {formError && <div className="form-error">{formError}</div>}
 
-      <button type="submit" disabled={isLoading}>
-        {isLoading ? "Ingresando..." : "Ingresar"}
-      </button>
-    </form>
+        <Button type="submit" isLoading={isSubmitting}>
+          Iniciar sesión
+        </Button>
+      </form>
+    </Card>
   );
 }

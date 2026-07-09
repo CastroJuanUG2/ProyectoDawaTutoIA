@@ -4,7 +4,7 @@ import { ApiRequestOptions, ApiResponse } from "@/types/api.types";
 const API_GATEWAY_URL = process.env.NEXT_PUBLIC_API_GATEWAY_URL;
 
 if (!API_GATEWAY_URL) {
-  throw new Error("No se puede establecer conexión con el sistema");
+  throw new Error("La variable NEXT_PUBLIC_API_GATEWAY_URL no está configurada.");
 }
 
 async function request<T>(

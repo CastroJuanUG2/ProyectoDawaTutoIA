@@ -6,6 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import { UserRole } from "@/types/auth.types";
 import { hasRole } from "@/lib/auth/permissions";
 import { APP_ROUTES } from "@/lib/utils/constants";
+import { Loading } from "@/components/ui/Loading";
 
 interface ProtectedLayoutProps {
   children: ReactNode;
@@ -17,51 +18,30 @@ export function ProtectedLayout({
   allowedRoles,
 }: ProtectedLayoutProps) {
   const router = useRouter();
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { user, token, isAuthenticated, isLoading } = useAuth();
 
-  const [isCheckingAccess, setIsCheckingAccess] = useState(true);
-  const [hasAccess, setHasAccess] = useState(false);
+  const [canRender, setCanRender] = useState(false);
 
   useEffect(() => {
     if (isLoading) {
       return;
     }
 
-    if (!isAuthenticated || !user) {
-      setHasAccess(false);
-      setIsCheckingAccess(false);
+    if (!isAuthenticated || !user || !token) {
       router.replace(APP_ROUTES.LOGIN);
       return;
     }
 
-    if (allowedRoles && allowedRoles.length > 0) {
-      const userHasAllowedRole = hasRole(user.roles, allowedRoles);
-
-      if (!userHasAllowedRole) {
-        setHasAccess(false);
-        setIsCheckingAccess(false);
-        router.replace(APP_ROUTES.UNAUTHORIZED);
-        return;
-      }
+    if (allowedRoles && !hasRole(user.roles, allowedRoles)) {
+      router.replace(APP_ROUTES.UNAUTHORIZED);
+      return;
     }
 
-    setHasAccess(true);
-    setIsCheckingAccess(false);
-  }, [isLoading, isAuthenticated, user, allowedRoles, router]);
+    setCanRender(true);
+  }, [isLoading, isAuthenticated, user, token, allowedRoles, router]);
 
-  if (isLoading || isCheckingAccess) {
-    return (
-      <main className="loading-page">
-        <div className="loading-card">
-          <h2>Validando acceso...</h2>
-          <p>Estamos verificando tu sesión y permisos.</p>
-        </div>
-      </main>
-    );
-  }
-
-  if (!hasAccess) {
-    return null;
+  if (isLoading || !canRender) {
+    return <Loading text="Validando acceso..." />;
   }
 
   return <>{children}</>;

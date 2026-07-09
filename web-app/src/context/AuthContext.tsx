@@ -1,21 +1,33 @@
 "use client";
 
-import { createContext, ReactNode, useContext,useEffect, useState} from "react";
-import { useRouter } from "next/navigation";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { authApi } from "@/lib/api/auth.api";
-import { clearAuthStorage, getAuthUser, getToken, saveAuthUser, saveToken} from "@/lib/auth/authStorage";
+import {
+  AuthUser,
+  LoginRequest,
+} from "@/types/auth.types";
+import {
+  clearAuthStorage,
+  getAuthUser,
+  getToken,
+  saveAuthUser,
+  saveToken,
+} from "@/lib/auth/authStorage";
 import { getDefaultRouteByRole } from "@/lib/auth/permissions";
-import { AuthUser, LoginRequest } from "@/types/auth.types";
-import { ApiResponse } from "@/types/api.types";
-import { getApiErrorMessage, logApiTrace } from "@/lib/utils/handleApiError";
 
 interface AuthContextValue {
   user: AuthUser | null;
   token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (payload: LoginRequest) => Promise<void>;
-  logout: () => void;
+  login: (payload: LoginRequest) => Promise<string>;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -25,13 +37,9 @@ interface AuthProviderProps {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const router = useRouter();
-
   const [user, setUser] = useState<AuthUser | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-
-  const isAuthenticated = Boolean(user && token);
 
   useEffect(() => {
     const storedToken = getToken();
@@ -45,43 +53,31 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setIsLoading(false);
   }, []);
 
-  async function login(payload: LoginRequest): Promise<void> {
-    setIsLoading(true);
+  async function login(payload: LoginRequest): Promise<string> {
+    const response = await authApi.login(payload);
 
-    try {
-      const response = await authApi.login(payload);
+    const accessToken = response.data.access_token;
+    const authUser = response.data.usuario;
 
-      const accessToken = response.data.access_token;
-      const authUser = response.data.usuario;
+    saveToken(accessToken);
+    saveAuthUser(authUser);
 
-      saveToken(accessToken);
-      saveAuthUser(authUser);
+    setToken(accessToken);
+    setUser(authUser);
 
-      setToken(accessToken);
-      setUser(authUser);
-
-      const defaultRoute = getDefaultRouteByRole(authUser.roles);
-      router.push(defaultRoute);
-    } catch (error) {
-      const apiError = error as ApiResponse<unknown>;
-
-      if (apiError?.trace_id) {
-        logApiTrace(apiError);
-      }
-
-      throw new Error(getApiErrorMessage(apiError));
-    } finally {
-      setIsLoading(false);
-    }
+    return getDefaultRouteByRole(authUser.roles);
   }
 
-  function logout(): void {
-    clearAuthStorage();
-
-    setToken(null);
-    setUser(null);
-
-    router.push("/login");
+  async function logout(): Promise<void> {
+    try {
+      await authApi.logout();
+    } catch {
+      // Aunque el backend falle, se limpia la sesión local.
+    } finally {
+      clearAuthStorage();
+      setToken(null);
+      setUser(null);
+    }
   }
 
   return (
@@ -89,7 +85,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       value={{
         user,
         token,
-        isAuthenticated,
+        isAuthenticated: Boolean(user && token),
         isLoading,
         login,
         logout,
@@ -104,7 +100,7 @@ export function useAuth(): AuthContextValue {
   const context = useContext(AuthContext);
 
   if (!context) {
-    throw new Error("useAuth debe usarse dentro de AuthProvider.");
+    throw new Error("useAuth debe usarse dentro de AuthProvider");
   }
 
   return context;

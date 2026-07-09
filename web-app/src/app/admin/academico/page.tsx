@@ -1,8 +1,39 @@
-"use client";
-
 import Link from "next/link";
 import { ProtectedLayout } from "@/components/layout/ProtectedLayout";
 import { AppShell } from "@/components/layout/AppShell";
+
+const academicModules = [
+  {
+    title: "Facultades",
+    description: "Consulta y gestión de facultades registradas.",
+    href: "/admin/academico/facultades",
+  },
+  {
+    title: "Carreras",
+    description: "Consulta y gestión de carreras académicas.",
+    href: "/admin/academico/carreras",
+  },
+  {
+    title: "Asignaturas",
+    description: "Consulta y gestión de asignaturas por carrera.",
+    href: "/admin/academico/asignaturas",
+  },
+  {
+    title: "Docentes",
+    description: "Consulta y gestión de docentes registrados.",
+    href: "/admin/academico/docentes",
+  },
+  {
+    title: "Estudiantes",
+    description: "Consulta y gestión de estudiantes registrados.",
+    href: "/admin/academico/estudiantes",
+  },
+  {
+    title: "Horarios",
+    description: "Consulta de horarios de atención docente.",
+    href: "/admin/academico/horarios",
+  },
+];
 
 export default function AcademicoPage() {
   return (
@@ -11,40 +42,21 @@ export default function AcademicoPage() {
         <section className="page-section">
           <h2>Administración académica</h2>
           <p>
-            Desde este módulo se administran las facultades, carreras,
-            asignaturas, docentes, estudiantes y horarios de atención.
+            Seleccione un módulo para consultar la información académica
+            registrada en el sistema.
           </p>
 
-          <div className="dashboard-grid">
-            <Link className="dashboard-card module-link" href="/admin/academico/facultades">
-              <h3>Facultades</h3>
-              <p>Registrar y consultar facultades académicas.</p>
-            </Link>
-
-            <Link className="dashboard-card module-link" href="/admin/academico/carreras">
-              <h3>Carreras</h3>
-              <p>Gestionar carreras vinculadas a una facultad.</p>
-            </Link>
-
-            <Link className="dashboard-card module-link" href="/admin/academico/asignaturas">
-              <h3>Asignaturas</h3>
-              <p>Administrar asignaturas por carrera y nivel.</p>
-            </Link>
-
-            <Link className="dashboard-card module-link" href="/admin/academico/docentes">
-              <h3>Docentes</h3>
-              <p>Consultar docentes registrados en el sistema.</p>
-            </Link>
-
-            <Link className="dashboard-card module-link" href="/admin/academico/estudiantes">
-              <h3>Estudiantes</h3>
-              <p>Consultar estudiantes registrados.</p>
-            </Link>
-
-            <Link className="dashboard-card module-link" href="/admin/academico/horarios">
-              <h3>Horarios</h3>
-              <p>Revisar horarios de atención docente.</p>
-            </Link>
+          <div className="module-grid">
+            {academicModules.map((module) => (
+              <Link
+                key={module.href}
+                href={module.href}
+                className="module-card"
+              >
+                <h3>{module.title}</h3>
+                <p>{module.description}</p>
+              </Link>
+            ))}
           </div>
         </section>
       </AppShell>

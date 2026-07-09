@@ -1,55 +1,119 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
+import { UserRole } from "@/types/auth.types";
 import { APP_ROUTES } from "@/lib/utils/constants";
 
+interface MenuItem {
+  label: string;
+  href: string;
+  roles: UserRole[];
+}
+
+const MENU_ITEMS: MenuItem[] = [
+  {
+    label: "Dashboard",
+    href: APP_ROUTES.DASHBOARD,
+    roles: ["ADMIN", "COORDINADOR", "DOCENTE", "ESTUDIANTE"],
+  },
+  {
+    label: "Administración",
+    href: APP_ROUTES.ADMIN,
+    roles: ["ADMIN", "COORDINADOR"],
+  },
+  {
+    label: "Usuarios",
+    href: APP_ROUTES.ADMIN_USUARIOS,
+    roles: ["ADMIN"],
+  },
+  {
+    label: "Roles",
+    href: APP_ROUTES.ADMIN_ROLES,
+    roles: ["ADMIN"],
+  },
+  {
+    label: "Académico",
+    href: APP_ROUTES.ADMIN_ACADEMICO,
+    roles: ["ADMIN", "COORDINADOR"],
+  },
+  {
+    label: "Solicitar tutoría",
+    href: APP_ROUTES.ESTUDIANTE_SOLICITAR_TUTORIA,
+    roles: ["ESTUDIANTE"],
+  },
+  {
+    label: "Historial de tutorías",
+    href: APP_ROUTES.ESTUDIANTE_HISTORIAL,
+    roles: ["ESTUDIANTE"],
+  },
+  {
+    label: "Solicitudes asignadas",
+    href: APP_ROUTES.DOCENTE_SOLICITUDES,
+    roles: ["DOCENTE"],
+  },
+  {
+    label: "Bitácoras",
+    href: APP_ROUTES.DOCENTE_BITACORAS,
+    roles: ["DOCENTE"],
+  },
+  {
+    label: "Chat IA",
+    href: APP_ROUTES.IA_CHAT,
+    roles: ["ADMIN", "COORDINADOR", "DOCENTE", "ESTUDIANTE"],
+  },
+  {
+    label: "Reportes",
+    href: APP_ROUTES.REPORTES,
+    roles: ["ADMIN", "COORDINADOR"],
+  },
+];
+
 export function AppSidebar() {
+  const pathname = usePathname();
   const { user } = useAuth();
 
-  const roles = user?.roles ?? [];
+  const [visibleItems, setVisibleItems] = useState<MenuItem[]>([]);
 
-  const isAdmin = roles.includes("ADMIN") || roles.includes("COORDINADOR");
-  const isDocente = roles.includes("DOCENTE");
-  const isEstudiante = roles.includes("ESTUDIANTE");
+  useEffect(() => {
+    if (!user) {
+      setVisibleItems([]);
+      return;
+    }
+
+    const filteredItems = MENU_ITEMS.filter((item) =>
+      item.roles.some((role) => user.roles.includes(role))
+    );
+
+    setVisibleItems(filteredItems);
+  }, [user]);
 
   return (
     <aside className="app-sidebar">
-      <h2>Menú</h2>
+      <div className="sidebar-brand">
+        <span>UG</span>
+        <div>
+          <strong>Tutorías IA</strong>
+          <small>Frontend</small>
+        </div>
+      </div>
 
-      <nav>
-        <Link href={APP_ROUTES.DASHBOARD}>Dashboard</Link>
-        <Link href={APP_ROUTES.IA_CHAT}>Chat IA</Link>
+      <nav className="sidebar-nav">
+        {visibleItems.map((item) => {
+          const isActive = pathname === item.href;
 
-        {isAdmin && (
-          <>
-            <Link href={APP_ROUTES.ADMIN}>Panel administrativo</Link>
-            <Link href={APP_ROUTES.ADMIN_USUARIOS}>Usuarios</Link>
-            <Link href={APP_ROUTES.ADMIN_ROLES}>Roles</Link>
-            <Link href={APP_ROUTES.ADMIN_ACADEMICO}>Administración académica</Link>
-            <Link href={APP_ROUTES.REPORTES}>Reportes</Link>
-          </>
-        )}
-
-        {isDocente && (
-          <>
-            <Link href={APP_ROUTES.DOCENTE}>Panel docente</Link>
-            <Link href={APP_ROUTES.DOCENTE_SOLICITUDES}>Solicitudes</Link>
-            <Link href={APP_ROUTES.DOCENTE_BITACORAS}>Bitácoras</Link>
-          </>
-        )}
-
-        {isEstudiante && (
-          <>
-            <Link href={APP_ROUTES.ESTUDIANTE}>Panel estudiante</Link>
-            <Link href={APP_ROUTES.ESTUDIANTE_SOLICITAR_TUTORIA}>
-              Solicitar tutoría
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`sidebar-link ${isActive ? "active" : ""}`}
+            >
+              {item.label}
             </Link>
-            <Link href={APP_ROUTES.ESTUDIANTE_HISTORIAL}>
-              Historial de tutorías
-            </Link>
-          </>
-        )}
+          );
+        })}
       </nav>
     </aside>
   );
