@@ -3,6 +3,7 @@ import {
   BitacoraTutoria,
   CrearBitacoraRequest,
   CrearSolicitudTutoriaRequest,
+  EstadoTutoria,
   SolicitudTutoria,
   Tutoria,
 } from "@/types/tutoria.types";
@@ -23,12 +24,12 @@ export const tutoriasApi = {
     return apiClient.get<Tutoria[]>("/tutorias/historial/estudiante");
   },
 
-  listarSolicitudesDocente() {
-    return apiClient.get<SolicitudTutoria[]>("/tutorias/solicitudes/docente");
+  listarTutoriasDocente() {
+    return apiClient.get<Tutoria[]>("/tutorias/docente");
   },
 
-  cambiarEstado(idTutoria: number, estado: string) {
-    return apiClient.patch<Tutoria, { estado: string }>(
+  cambiarEstado(idTutoria: number, estado: EstadoTutoria) {
+    return apiClient.patch<Tutoria, { estado: EstadoTutoria }>(
       `/tutorias/${idTutoria}/estado`,
       { estado }
     );
@@ -39,5 +40,9 @@ export const tutoriasApi = {
       "/tutorias/bitacoras",
       payload
     );
+  },
+
+  listarBitacorasDocente() {
+    return apiClient.get<BitacoraTutoria[]>("/tutorias/bitacoras/docente");
   },
 };

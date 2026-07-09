@@ -4,6 +4,7 @@ export interface ChatMessage {
   contenido: string;
   creado_en: string;
   fuente?: string;
+  requiere_escalamiento?: boolean;
 }
 
 export interface ChatRequest {
