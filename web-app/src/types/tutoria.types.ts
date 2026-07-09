@@ -13,7 +13,8 @@ export interface SolicitudTutoria {
   tema: string;
   descripcion: string;
   estado: EstadoTutoria;
-  fecha_solicitada: string;
+  fecha_preferida: string;
+  hora_preferida: string;
   creado_en: string;
 }
 

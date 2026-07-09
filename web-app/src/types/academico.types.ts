@@ -43,10 +43,19 @@ export interface Estudiante {
   activo: boolean;
 }
 
+export type DiaSemana =
+  | "LUNES"
+  | "MARTES"
+  | "MIERCOLES"
+  | "JUEVES"
+  | "VIERNES"
+  | "SABADO"
+  | "DOMINGO";
+
 export interface HorarioDocente {
   id_horario: number;
   id_docente: number;
-  dia_semana: string;
+  dia_semana: DiaSemana;
   hora_inicio: string;
   hora_fin: string;
   activo: boolean;
@@ -68,4 +77,22 @@ export interface CrearAsignaturaRequest {
   nombre: string;
   codigo: string;
   nivel: string;
+}
+
+export interface CrearDocenteRequest {
+  id_usuario: number;
+  especialidad?: string;
+}
+
+export interface CrearEstudianteRequest {
+  id_usuario: number;
+  id_carrera: number;
+  matricula: string;
+}
+
+export interface CrearHorarioDocenteRequest {
+  id_docente: number;
+  dia_semana: DiaSemana;
+  hora_inicio: string;
+  hora_fin: string;
 }

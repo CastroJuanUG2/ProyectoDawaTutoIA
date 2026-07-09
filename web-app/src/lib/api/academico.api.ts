@@ -4,7 +4,10 @@ import {
   Carrera,
   CrearAsignaturaRequest,
   CrearCarreraRequest,
+  CrearDocenteRequest,
+  CrearEstudianteRequest,
   CrearFacultadRequest,
+  CrearHorarioDocenteRequest,
   Docente,
   Estudiante,
   Facultad,
@@ -28,10 +31,7 @@ export const academicoApi = {
   },
 
   crearCarrera(payload: CrearCarreraRequest) {
-    return apiClient.post<Carrera, CrearCarreraRequest>(
-      "/carreras",
-      payload
-    );
+    return apiClient.post<Carrera, CrearCarreraRequest>("/carreras", payload);
   },
 
   listarAsignaturas() {
@@ -49,8 +49,30 @@ export const academicoApi = {
     return apiClient.get<Docente[]>("/docentes");
   },
 
+  crearDocente(payload: CrearDocenteRequest) {
+    return apiClient.post<Docente, CrearDocenteRequest>("/docentes", payload);
+  },
+
   listarEstudiantes() {
     return apiClient.get<Estudiante[]>("/estudiantes");
+  },
+
+  crearEstudiante(payload: CrearEstudianteRequest) {
+    return apiClient.post<Estudiante, CrearEstudianteRequest>(
+      "/estudiantes",
+      payload
+    );
+  },
+
+  listarHorarios() {
+    return apiClient.get<HorarioDocente[]>("/horarios-docente");
+  },
+
+  crearHorarioDocente(payload: CrearHorarioDocenteRequest) {
+    return apiClient.post<HorarioDocente, CrearHorarioDocenteRequest>(
+      "/horarios-docente",
+      payload
+    );
   },
 
   listarHorariosDocente(idDocente: number) {
