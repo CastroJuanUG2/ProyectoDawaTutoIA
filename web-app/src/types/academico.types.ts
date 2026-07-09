@@ -51,3 +51,21 @@ export interface HorarioDocente {
   hora_fin: string;
   activo: boolean;
 }
+
+export interface CrearFacultadRequest {
+  nombre: string;
+  codigo: string;
+}
+
+export interface CrearCarreraRequest {
+  id_facultad: number;
+  nombre: string;
+  codigo: string;
+}
+
+export interface CrearAsignaturaRequest {
+  id_carrera: number;
+  nombre: string;
+  codigo: string;
+  nivel: string;
+}

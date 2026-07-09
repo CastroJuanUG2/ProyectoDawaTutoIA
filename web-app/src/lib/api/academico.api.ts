@@ -2,6 +2,9 @@ import { apiClient } from "@/lib/api/apiClient";
 import {
   Asignatura,
   Carrera,
+  CrearAsignaturaRequest,
+  CrearCarreraRequest,
+  CrearFacultadRequest,
   Docente,
   Estudiante,
   Facultad,
@@ -13,12 +16,33 @@ export const academicoApi = {
     return apiClient.get<Facultad[]>("/facultades");
   },
 
+  crearFacultad(payload: CrearFacultadRequest) {
+    return apiClient.post<Facultad, CrearFacultadRequest>(
+      "/facultades",
+      payload
+    );
+  },
+
   listarCarreras() {
     return apiClient.get<Carrera[]>("/carreras");
   },
 
+  crearCarrera(payload: CrearCarreraRequest) {
+    return apiClient.post<Carrera, CrearCarreraRequest>(
+      "/carreras",
+      payload
+    );
+  },
+
   listarAsignaturas() {
     return apiClient.get<Asignatura[]>("/asignaturas");
+  },
+
+  crearAsignatura(payload: CrearAsignaturaRequest) {
+    return apiClient.post<Asignatura, CrearAsignaturaRequest>(
+      "/asignaturas",
+      payload
+    );
   },
 
   listarDocentes() {
