@@ -2,8 +2,8 @@ export type UserRole = "ADMIN" | "COORDINADOR" | "DOCENTE" | "ESTUDIANTE";
 
 export interface AuthUser {
   id_usuario: number;
-  id_estudiante?: number;
-  id_docente?: number;
+  id_estudiante?: number | null;
+  id_docente?: number | null;
   nombres: string;
   apellidos: string;
   correo: string;
@@ -18,5 +18,5 @@ export interface LoginRequest {
 export interface LoginResponse {
   access_token: string;
   token_type: "Bearer";
-  usuario: AuthUser;
+  usuario?: AuthUser;
 }

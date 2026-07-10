@@ -125,8 +125,8 @@ export function removeToken(): void {
 export function saveAuthUser(user: AuthUser): void {
   const safeUser: AuthUser = {
     id_usuario: user.id_usuario,
-    id_estudiante: user.id_estudiante,
-    id_docente: user.id_docente,
+    id_estudiante: user.id_estudiante ?? null,
+    id_docente: user.id_docente ?? null,
     nombres: user.nombres,
     apellidos: user.apellidos,
     correo: user.correo,
@@ -158,8 +158,8 @@ export function saveAuthSession(token: string, user: AuthUser): void {
     token: cleanToken,
     user: {
       id_usuario: user.id_usuario,
-      id_estudiante: user.id_estudiante,
-      id_docente: user.id_docente,
+      id_estudiante: user.id_estudiante ?? null,
+      id_docente: user.id_docente ?? null,
       nombres: user.nombres,
       apellidos: user.apellidos,
       correo: user.correo,

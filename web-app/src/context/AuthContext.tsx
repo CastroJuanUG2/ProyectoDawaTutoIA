@@ -18,6 +18,7 @@ import {
   saveToken,
 } from "@/lib/auth/authStorage";
 import { getDefaultRouteByRole } from "@/lib/auth/permissions";
+import { normalizeAuthUser } from "@/lib/auth/authUserNormalizer";
 
 interface AuthContextValue {
   user: AuthUser | null;
@@ -65,9 +66,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       try {
         const response = await authApi.me();
+        const authUser = normalizeAuthUser(response.data);
 
-        saveAuthSession(storedSession.token, response.data);
-        setUser(response.data);
+        saveAuthSession(storedSession.token, authUser);
+        setUser(authUser);
       } catch {
         clearAuthStorage();
         setUser(null);
@@ -89,13 +91,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setToken(accessToken);
 
     try {
-      const meResponse = await authApi.me();
-      const authUser = meResponse.data;
+        const meResponse = await authApi.me();
+        const authUser = normalizeAuthUser(meResponse.data);
 
-      saveAuthSession(accessToken, authUser);
-      setUser(authUser);
+        saveAuthSession(accessToken, authUser);
+        setUser(authUser);
 
-      return getDefaultRouteByRole(authUser.roles);
+        return getDefaultRouteByRole(authUser.roles);
     } catch (error) {
       clearAuthStorage();
       setUser(null);
@@ -115,9 +117,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
 
     const response = await authApi.me();
+    const authUser = normalizeAuthUser(response.data);
 
-    saveAuthSession(currentToken, response.data);
-    setUser(response.data);
+    saveAuthSession(currentToken, authUser);
+    setUser(authUser);
     setToken(currentToken);
   }
 
