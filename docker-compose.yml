@@ -58,18 +58,20 @@ services:
       dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_API_GATEWAY_URL: http://localhost:3012/api/v1
+        NEXT_PUBLIC_APP_NAME: Sistema Web Inteligente de Gestión de Tutorías Académicas con Agente de IA
     ports:
       - "3010:3011"
     environment:
       NODE_ENV: production
       PORT: 3011
-      NEXT_PUBLIC_APP_NAME: Sistema Web Inteligente de Gestión de Tutorías Académicas con Agente de IA
       NEXT_PUBLIC_API_GATEWAY_URL: http://localhost:3012/api/v1
+      NEXT_PUBLIC_APP_NAME: Sistema Web Inteligente de Gestión de Tutorías Académicas con Agente de IA
     depends_on:
       - backend-flask
     networks:
       - dawa-network
     restart: unless-stopped
+
 volumes:
   dawa_postgres_data:
 
