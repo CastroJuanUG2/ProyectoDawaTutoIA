@@ -6,7 +6,6 @@ import { Carrera } from "@/types/academico.types";
 import { Table } from "@/components/ui/Table";
 import { Badge } from "@/components/ui/Badge";
 import { Loading } from "@/components/ui/Loading";
-import { ApiResponse } from "@/types/api.types";
 import { getApiErrorMessage, logApiTrace } from "@/lib/utils/handleApiError";
 
 export function CarrerasList() {
@@ -23,10 +22,8 @@ export function CarrerasList() {
         const response = await academicoApi.listarCarreras();
         setCarreras(response.data);
       } catch (error) {
-        const apiError = error as ApiResponse<unknown>;
-
-        logApiTrace(apiError);
-        setErrorMessage(getApiErrorMessage(apiError));
+        logApiTrace(error);
+        setErrorMessage(getApiErrorMessage(error));
       } finally {
         setIsLoading(false);
       }
@@ -47,7 +44,6 @@ export function CarrerasList() {
         data={carreras}
         columns={[
           { header: "ID", accessor: "id_carrera" },
-          { header: "ID Facultad", accessor: "id_facultad" },
           { header: "Código", accessor: "codigo" },
           { header: "Nombre", accessor: "nombre" },
           {

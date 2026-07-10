@@ -50,9 +50,9 @@ export const tutoriasApi = {
   },
 
   registrarBitacora(idTutoria: number, payload: CrearBitacoraRequest) {
-    return apiClient.post<BitacoraTutoria, CrearBitacoraRequest>(
-      `/tutorias/${idTutoria}/bitacora`,
-      payload
-    );
+      return apiClient.post<BitacoraTutoria, CrearBitacoraRequest>(
+        `/tutorias/${idTutoria}/bitacora`,
+        payload
+      );
   },
 };

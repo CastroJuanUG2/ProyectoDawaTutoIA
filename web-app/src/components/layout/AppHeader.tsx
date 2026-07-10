@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { APP_ROUTES } from "@/lib/utils/constants";
-import { NotificationsDropdown } from "@/components/layout/NotificationsDropdown";
+import { NotificationsDropdown } from "@/components/layout/NotificationsDropDown";
 
 export function AppHeader() {
   const router = useRouter();

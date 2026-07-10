@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { notificacionesApi } from "@/lib/api/notificaciones.api";
 import { Notificacion } from "@/types/notificacion.types";
-import { ApiResponse } from "@/types/api.types";
 import { getApiErrorMessage, logApiTrace } from "@/lib/utils/handleApiError";
 import { formatDateTime } from "@/lib/utils/formatDate";
 
@@ -27,10 +26,8 @@ export function NotificationsDropdown() {
         const response = await notificacionesApi.listar();
         setNotificaciones(response.data);
       } catch (error) {
-        const apiError = error as ApiResponse<unknown>;
-
-        logApiTrace(apiError);
-        setErrorMessage(getApiErrorMessage(apiError));
+        logApiTrace(error);
+        setErrorMessage(getApiErrorMessage(error));
       } finally {
         setIsLoading(false);
       }
@@ -54,10 +51,8 @@ export function NotificationsDropdown() {
         )
       );
     } catch (error) {
-      const apiError = error as ApiResponse<unknown>;
-
-      logApiTrace(apiError);
-      setErrorMessage(getApiErrorMessage(apiError));
+      logApiTrace(error);
+      setErrorMessage(getApiErrorMessage(error));
     } finally {
       setReadingId(null);
     }
