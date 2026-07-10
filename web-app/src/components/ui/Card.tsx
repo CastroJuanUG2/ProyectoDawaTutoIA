@@ -1,21 +1,13 @@
-import { InputHTMLAttributes } from "react";
+import { HTMLAttributes, ReactNode } from "react";
 
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
-  label: string;
-  error?: string;
+interface CardProps extends HTMLAttributes<HTMLDivElement> {
+  children: ReactNode;
 }
 
-export function Input({
-  label,
-  error,
-  className = "",
-  ...props
-}: InputProps) {
+export function Card({ children, className = "", ...props }: CardProps) {
   return (
-    <div className="input-group">
-      <label className="input-label">{label}</label>
-      <input className={`app-input ${className}`} {...props} />
-      {error && <small className="input-error">{error}</small>}
+    <div className={`app-card ${className}`} {...props}>
+      {children}
     </div>
   );
 }

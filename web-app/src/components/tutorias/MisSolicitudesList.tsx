@@ -9,32 +9,43 @@ import { formatDateTime } from "@/lib/utils/formatDate";
 import { Table } from "@/components/ui/Table";
 import { Loading } from "@/components/ui/Loading";
 import { TutoriaEstadoBadge } from "@/components/tutorias/TutoriaEstadoBadge";
+import { useAuth } from "@/context/AuthContext";
 
 export function MisSolicitudesList() {
   const [solicitudes, setSolicitudes] = useState<SolicitudTutoria[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const { user } = useAuth();
 
   useEffect(() => {
-    async function loadSolicitudes() {
-      try {
-        setIsLoading(true);
-        setErrorMessage("");
+      async function loadSolicitudes() {
+        if (!user?.id_estudiante) {
+          setErrorMessage("El usuario autenticado no tiene estudiante asociado.");
+          setIsLoading(false);
+          return;
+        }
 
-        const response = await tutoriasApi.listarMisSolicitudes();
-        setSolicitudes(response.data);
-      } catch (error) {
-        const apiError = error as ApiResponse<unknown>;
+        try {
+          setIsLoading(true);
+          setErrorMessage("");
 
-        logApiTrace(apiError);
-        setErrorMessage(getApiErrorMessage(apiError));
-      } finally {
-        setIsLoading(false);
+          const response = await tutoriasApi.listarSolicitudesEstudiante(
+            user.id_estudiante
+          );
+
+          setSolicitudes(response.data);
+        } catch (error) {
+          const apiError = error as ApiResponse<unknown>;
+
+          logApiTrace(apiError);
+          setErrorMessage(getApiErrorMessage(apiError));
+        } finally {
+          setIsLoading(false);
+        }
       }
-    }
 
-    loadSolicitudes();
-  }, []);
+      loadSolicitudes();
+    }, [user]);
 
   if (isLoading) {
     return <Loading text="Cargando solicitudes de tutoría..." />;

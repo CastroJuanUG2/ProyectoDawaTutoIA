@@ -19,6 +19,30 @@ export interface ChatResponse {
   requiere_escalamiento: boolean;
 }
 
+export interface ClasificarSolicitudRequest {
+  mensaje: string;
+  id_asignatura?: number;
+}
+
+export interface ClasificarSolicitudResponse {
+  categoria: string;
+  prioridad: "BAJA" | "MEDIA" | "ALTA";
+  requiere_escalamiento: boolean;
+}
+
+export interface SugerirDocenteRequest {
+  id_asignatura: number;
+  fecha_preferida?: string;
+  hora_preferida?: string;
+}
+
+export interface SugerirDocenteResponse {
+  id_docente: number;
+  docente: string;
+  motivo: string;
+  disponible: boolean;
+}
+
 export interface FeedbackIARequest {
   util: boolean;
   comentario?: string;

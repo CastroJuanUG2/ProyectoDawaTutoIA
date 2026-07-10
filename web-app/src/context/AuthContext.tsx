@@ -8,10 +8,7 @@ import {
   useState,
 } from "react";
 import { authApi } from "@/lib/api/auth.api";
-import {
-  AuthUser,
-  LoginRequest,
-} from "@/types/auth.types";
+import { AuthUser, LoginRequest } from "@/types/auth.types";
 import {
   clearAuthStorage,
   getAuthUser,
@@ -42,15 +39,35 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const storedToken = getToken();
-    const storedUser = getAuthUser<AuthUser>();
+    async function loadSession() {
+      const storedToken = getToken();
+      const storedUser = getAuthUser<AuthUser>();
 
-    if (storedToken && storedUser) {
+      if (!storedToken) {
+        setIsLoading(false);
+        return;
+      }
+
       setToken(storedToken);
-      setUser(storedUser);
+
+      if (storedUser) {
+        setUser(storedUser);
+      }
+
+      try {
+        const response = await authApi.me();
+        setUser(response.data);
+        saveAuthUser(response.data);
+      } catch {
+        clearAuthStorage();
+        setToken(null);
+        setUser(null);
+      } finally {
+        setIsLoading(false);
+      }
     }
 
-    setIsLoading(false);
+    loadSession();
   }, []);
 
   async function login(payload: LoginRequest): Promise<string> {

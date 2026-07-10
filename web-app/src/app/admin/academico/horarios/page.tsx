@@ -1,7 +1,7 @@
 import { ProtectedLayout } from "@/components/layout/ProtectedLayout";
 import { AppShell } from "@/components/layout/AppShell";
 import { AcademicPageHeader } from "@/components/academico/AcademicPageHeader";
-import { HorariosDocenteList } from "@/components/academico/HorariosDocenteList";
+import { HorariosManager } from "@/components/academico/HorariosManager";
 
 export default function HorariosPage() {
   return (
@@ -10,10 +10,10 @@ export default function HorariosPage() {
         <section className="page-section">
           <AcademicPageHeader
             title="Horarios de atención docente"
-            description="Consulta los horarios disponibles de un docente registrado."
+            description="Consulta y registra horarios de disponibilidad para docentes tutores."
           />
 
-          <HorariosDocenteList />
+          <HorariosManager />
         </section>
       </AppShell>
     </ProtectedLayout>

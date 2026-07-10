@@ -3,20 +3,20 @@ import { ProtectedLayout } from "@/components/layout/ProtectedLayout";
 import { AppShell } from "@/components/layout/AppShell";
 import { APP_ROUTES } from "@/lib/utils/constants";
 
-export default function ReportesPage() {
+export default function RolesPage() {
   return (
-    <ProtectedLayout allowedRoles={["ADMIN", "COORDINADOR"]}>
+    <ProtectedLayout allowedRoles={["ADMIN"]}>
       <AppShell>
         <section className="page-section">
           <span className="section-label">Módulo pausado</span>
-          <h2>Reportes fuera del MVP</h2>
+          <h2>Roles fuera del MVP</h2>
           <p>
-            El módulo de reportes no forma parte de los endpoints mínimos del
-            primer prototipo funcional. Por ahora queda pausado.
+            La gestión de roles queda pausada porque no forma parte de los
+            endpoints mínimos del primer prototipo funcional.
           </p>
 
-          <Link href={APP_ROUTES.DASHBOARD} className="module-card">
-            Volver al dashboard
+          <Link href={APP_ROUTES.ADMIN} className="module-card">
+            Volver a administración
           </Link>
         </section>
       </AppShell>

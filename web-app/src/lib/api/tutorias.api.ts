@@ -3,9 +3,11 @@ import {
   BitacoraTutoria,
   CrearBitacoraRequest,
   CrearSolicitudTutoriaRequest,
-  EstadoTutoria,
+  CrearTutoriaRequest,
   SolicitudTutoria,
   Tutoria,
+  ValidarDisponibilidadRequest,
+  ValidarDisponibilidadResponse,
 } from "@/types/tutoria.types";
 
 export const tutoriasApi = {
@@ -16,33 +18,41 @@ export const tutoriasApi = {
     );
   },
 
-  listarMisSolicitudes() {
-    return apiClient.get<SolicitudTutoria[]>("/tutorias/solicitudes/mis");
-  },
-
-  listarHistorialEstudiante() {
-    return apiClient.get<Tutoria[]>("/tutorias/historial/estudiante");
-  },
-
-  listarTutoriasDocente() {
-    return apiClient.get<Tutoria[]>("/tutorias/docente");
-  },
-
-  cambiarEstado(idTutoria: number, estado: EstadoTutoria) {
-    return apiClient.patch<Tutoria, { estado: EstadoTutoria }>(
-      `/tutorias/${idTutoria}/estado`,
-      { estado }
+  listarSolicitudesEstudiante(idEstudiante: number) {
+    return apiClient.get<SolicitudTutoria[]>(
+      `/tutorias/estudiantes/${idEstudiante}/solicitudes`
     );
   },
 
-  crearBitacora(payload: CrearBitacoraRequest) {
+  listarSolicitudesDocente(idDocente: number) {
+    return apiClient.get<Tutoria[]>(
+      `/tutorias/docentes/${idDocente}/solicitudes`
+    );
+  },
+
+  validarDisponibilidad(payload: ValidarDisponibilidadRequest) {
+    return apiClient.post<
+      ValidarDisponibilidadResponse,
+      ValidarDisponibilidadRequest
+    >("/tutorias/disponibilidad/validar", payload);
+  },
+
+  crearTutoria(payload: CrearTutoriaRequest) {
+    return apiClient.post<Tutoria, CrearTutoriaRequest>("/tutorias", payload);
+  },
+
+  confirmarTutoria(idTutoria: number) {
+    return apiClient.patch<Tutoria>(`/tutorias/${idTutoria}/confirmar`);
+  },
+
+  cancelarTutoria(idTutoria: number) {
+    return apiClient.patch<Tutoria>(`/tutorias/${idTutoria}/cancelar`);
+  },
+
+  registrarBitacora(idTutoria: number, payload: CrearBitacoraRequest) {
     return apiClient.post<BitacoraTutoria, CrearBitacoraRequest>(
-      "/tutorias/bitacoras",
+      `/tutorias/${idTutoria}/bitacora`,
       payload
     );
-  },
-
-  listarBitacorasDocente() {
-    return apiClient.get<BitacoraTutoria[]>("/tutorias/bitacoras/docente");
   },
 };

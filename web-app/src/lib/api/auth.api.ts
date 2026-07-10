@@ -1,5 +1,5 @@
 import { apiClient } from "@/lib/api/apiClient";
-import { LoginRequest, LoginResponse } from "@/types/auth.types";
+import { AuthUser, LoginRequest, LoginResponse } from "@/types/auth.types";
 
 export const authApi = {
   login(payload: LoginRequest) {
@@ -8,11 +8,11 @@ export const authApi = {
     });
   },
 
-  logout() {
-    return apiClient.post<null>("/auth/logout");
+  me() {
+    return apiClient.get<AuthUser>("/auth/me");
   },
 
-  validarToken() {
-    return apiClient.get<{ valido: boolean }>("/auth/validar-token");
+  logout() {
+    return apiClient.post<null>("/auth/logout");
   },
 };

@@ -8,6 +8,7 @@ import { getApiErrorMessage, logApiTrace } from "@/lib/utils/handleApiError";
 import { Button } from "@/components/ui/Button";
 import { Loading } from "@/components/ui/Loading";
 import { ChatMessage } from "@/components/ia/ChatMessage";
+import { useAuth } from "@/context/AuthContext";
 
 export function ChatBox() {
   const [messages, setMessages] = useState<ChatMessageType[]>([]);
@@ -15,27 +16,34 @@ export function ChatBox() {
   const [isLoadingHistory, setIsLoadingHistory] = useState(true);
   const [isSending, setIsSending] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const { user } = useAuth();
 
-  useEffect(() => {
-    async function loadHistorial() {
-      try {
-        setIsLoadingHistory(true);
-        setErrorMessage("");
+   useEffect(() => {
+      async function loadHistorial() {
+        if (!user?.id_usuario) {
+          setErrorMessage("No se pudo identificar el usuario autenticado.");
+          setIsLoadingHistory(false);
+          return;
+        }
 
-        const response = await iaApi.listarHistorial();
-        setMessages(response.data);
-      } catch (error) {
-        const apiError = error as ApiResponse<unknown>;
+        try {
+          setIsLoadingHistory(true);
+          setErrorMessage("");
 
-        logApiTrace(apiError);
-        setErrorMessage(getApiErrorMessage(apiError));
-      } finally {
-        setIsLoadingHistory(false);
+          const response = await iaApi.listarHistorialUsuario(user.id_usuario);
+          setMessages(response.data);
+        } catch (error) {
+          const apiError = error as ApiResponse<unknown>;
+
+          logApiTrace(apiError);
+          setErrorMessage(getApiErrorMessage(apiError));
+        } finally {
+          setIsLoadingHistory(false);
+        }
       }
-    }
 
-    loadHistorial();
-  }, []);
+      loadHistorial();
+   }, [user]);
 
   useEffect(() => {
     const chatBody = document.querySelector(".chat-body");

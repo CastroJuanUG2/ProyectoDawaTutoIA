@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { APP_ROUTES } from "@/lib/utils/constants";
+import { NotificationsDropdown } from "@/components/layout/NotificationsDropdown";
 
 export function AppHeader() {
   const router = useRouter();
@@ -25,25 +26,29 @@ export function AppHeader() {
     <header className="app-header">
       <div>
         <h1>DAWA Tutorías IA</h1>
-        <p>Sistema Web Inteligente de Gestión de Tutorías Académicas</p>
+        <p>Primer prototipo funcional del sistema académico.</p>
       </div>
 
-      <div className="app-header-user">
-        <div>
-          <strong>
-            {user?.nombres} {user?.apellidos}
-          </strong>
-          <span>{user?.roles.join(" · ")}</span>
-        </div>
+      <div className="app-header-actions">
+        <NotificationsDropdown />
 
-        <button
-          type="button"
-          className="logout-button"
-          onClick={handleLogout}
-          disabled={isLoggingOut}
-        >
-          {isLoggingOut ? "Saliendo..." : "Cerrar sesión"}
-        </button>
+        <div className="app-header-user">
+          <div>
+            <strong>
+              {user?.nombres} {user?.apellidos}
+            </strong>
+            <span>{user?.roles.join(" · ")}</span>
+          </div>
+
+          <button
+            type="button"
+            className="logout-button"
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+          >
+            {isLoggingOut ? "Saliendo..." : "Cerrar sesión"}
+          </button>
+        </div>
       </div>
     </header>
   );

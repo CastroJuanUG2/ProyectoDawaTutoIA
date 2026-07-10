@@ -2,6 +2,8 @@ export type UserRole = "ADMIN" | "COORDINADOR" | "DOCENTE" | "ESTUDIANTE";
 
 export interface AuthUser {
   id_usuario: number;
+  id_estudiante?: number;
+  id_docente?: number;
   nombres: string;
   apellidos: string;
   correo: string;

@@ -13,8 +13,9 @@ export interface SolicitudTutoria {
   tema: string;
   descripcion: string;
   estado: EstadoTutoria;
-  fecha_preferida: string;
-  hora_preferida: string;
+  fecha_solicitada?: string;
+  fecha_preferida?: string;
+  hora_preferida?: string;
   creado_en: string;
 }
 
@@ -24,6 +25,26 @@ export interface CrearSolicitudTutoriaRequest {
   descripcion: string;
   fecha_preferida: string;
   hora_preferida: string;
+}
+
+export interface ValidarDisponibilidadRequest {
+  id_docente: number;
+  fecha: string;
+  hora_inicio: string;
+  hora_fin: string;
+}
+
+export interface ValidarDisponibilidadResponse {
+  disponible: boolean;
+  motivo?: string;
+}
+
+export interface CrearTutoriaRequest {
+  id_solicitud: number;
+  id_docente: number;
+  fecha: string;
+  hora_inicio: string;
+  hora_fin: string;
 }
 
 export interface Tutoria {
@@ -49,7 +70,6 @@ export interface BitacoraTutoria {
 }
 
 export interface CrearBitacoraRequest {
-  id_tutoria: number;
   observaciones: string;
   recomendaciones: string;
   asistencia_estudiante: boolean;

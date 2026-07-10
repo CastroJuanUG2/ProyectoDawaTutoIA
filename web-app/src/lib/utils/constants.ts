@@ -4,9 +4,11 @@ export const APP_ROUTES = {
   UNAUTHORIZED: "/unauthorized",
 
   ADMIN: "/admin",
-  ADMIN_USUARIOS: "/admin/usuarios",
-  ADMIN_ROLES: "/admin/roles",
   ADMIN_ACADEMICO: "/admin/academico",
+  ADMIN_CARRERAS: "/admin/academico/carreras",
+  ADMIN_ASIGNATURAS: "/admin/academico/asignaturas",
+  ADMIN_DOCENTES: "/admin/academico/docentes",
+  ADMIN_HORARIOS: "/admin/academico/horarios",
 
   ESTUDIANTE: "/estudiante",
   ESTUDIANTE_SOLICITAR_TUTORIA: "/estudiante/tutorias/solicitar",
@@ -17,7 +19,6 @@ export const APP_ROUTES = {
   DOCENTE_BITACORAS: "/docente/bitacoras",
 
   IA_CHAT: "/ia/chat",
-  REPORTES: "/reportes",
 };
 
 export const API_ERROR_CODES = {

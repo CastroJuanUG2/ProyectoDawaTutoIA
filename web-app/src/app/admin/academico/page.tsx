@@ -1,37 +1,28 @@
 import Link from "next/link";
 import { ProtectedLayout } from "@/components/layout/ProtectedLayout";
 import { AppShell } from "@/components/layout/AppShell";
+import { APP_ROUTES } from "@/lib/utils/constants";
 
 const academicModules = [
   {
-    title: "Facultades",
-    description: "Consulta y gestión de facultades registradas.",
-    href: "/admin/academico/facultades",
-  },
-  {
     title: "Carreras",
-    description: "Consulta y gestión de carreras académicas.",
-    href: "/admin/academico/carreras",
+    description: "Consulta las carreras académicas disponibles.",
+    href: APP_ROUTES.ADMIN_CARRERAS,
   },
   {
     title: "Asignaturas",
-    description: "Consulta y gestión de asignaturas por carrera.",
-    href: "/admin/academico/asignaturas",
+    description: "Consulta las asignaturas registradas en el sistema.",
+    href: APP_ROUTES.ADMIN_ASIGNATURAS,
   },
   {
     title: "Docentes",
-    description: "Consulta y gestión de docentes registrados.",
-    href: "/admin/academico/docentes",
-  },
-  {
-    title: "Estudiantes",
-    description: "Consulta y gestión de estudiantes registrados.",
-    href: "/admin/academico/estudiantes",
+    description: "Consulta los docentes registrados para tutorías.",
+    href: APP_ROUTES.ADMIN_DOCENTES,
   },
   {
     title: "Horarios",
-    description: "Consulta de horarios de atención docente.",
-    href: "/admin/academico/horarios",
+    description: "Consulta y registra horarios de atención docente.",
+    href: APP_ROUTES.ADMIN_HORARIOS,
   },
 ];
 
@@ -42,8 +33,7 @@ export default function AcademicoPage() {
         <section className="page-section">
           <h2>Administración académica</h2>
           <p>
-            Seleccione un módulo para consultar la información académica
-            registrada en el sistema.
+            Módulo académico.
           </p>
 
           <div className="module-grid">

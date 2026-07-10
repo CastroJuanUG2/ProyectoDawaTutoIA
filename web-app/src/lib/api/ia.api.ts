@@ -3,7 +3,11 @@ import {
   ChatMessage,
   ChatRequest,
   ChatResponse,
+  ClasificarSolicitudRequest,
+  ClasificarSolicitudResponse,
   FeedbackIARequest,
+  SugerirDocenteRequest,
+  SugerirDocenteResponse,
 } from "@/types/ia.types";
 
 export const iaApi = {
@@ -11,8 +15,22 @@ export const iaApi = {
     return apiClient.post<ChatResponse, ChatRequest>("/ia/chat", payload);
   },
 
-  listarHistorial() {
-    return apiClient.get<ChatMessage[]>("/ia/historial");
+  clasificarSolicitud(payload: ClasificarSolicitudRequest) {
+    return apiClient.post<
+      ClasificarSolicitudResponse,
+      ClasificarSolicitudRequest
+    >("/ia/clasificar-solicitud", payload);
+  },
+
+  sugerirDocente(payload: SugerirDocenteRequest) {
+    return apiClient.post<SugerirDocenteResponse, SugerirDocenteRequest>(
+      "/ia/sugerir-docente",
+      payload
+    );
+  },
+
+  listarHistorialUsuario(idUsuario: number) {
+    return apiClient.get<ChatMessage[]>(`/ia/usuarios/${idUsuario}/historial`);
   },
 
   enviarFeedback(idMensaje: number, payload: FeedbackIARequest) {

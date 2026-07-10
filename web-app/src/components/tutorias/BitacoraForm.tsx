@@ -6,6 +6,7 @@ import { Tutoria } from "@/types/tutoria.types";
 import { ApiResponse } from "@/types/api.types";
 import { getApiErrorMessage, logApiTrace } from "@/lib/utils/handleApiError";
 import { Button } from "@/components/ui/Button";
+import { useAuth } from "@/context/AuthContext";
 
 export function BitacoraForm() {
   const [tutorias, setTutorias] = useState<Tutoria[]>([]);
@@ -13,6 +14,7 @@ export function BitacoraForm() {
   const [observaciones, setObservaciones] = useState("");
   const [recomendaciones, setRecomendaciones] = useState("");
   const [asistenciaEstudiante, setAsistenciaEstudiante] = useState(true);
+  cont { user } = useAuth();
 
   const [isLoadingTutorias, setIsLoadingTutorias] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -20,31 +22,39 @@ export function BitacoraForm() {
   const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
-    async function loadTutorias() {
-      try {
-        setIsLoadingTutorias(true);
-        setErrorMessage("");
-
-        const response = await tutoriasApi.listarTutoriasDocente();
-
-        const tutoriasValidas = response.data.filter(
-          (tutoria) =>
-            tutoria.estado === "CONFIRMADA" || tutoria.estado === "ATENDIDA"
-        );
-
-        setTutorias(tutoriasValidas);
-      } catch (error) {
-        const apiError = error as ApiResponse<unknown>;
-
-        logApiTrace(apiError);
-        setErrorMessage(getApiErrorMessage(apiError));
-      } finally {
-        setIsLoadingTutorias(false);
-      }
+  async function loadTutorias() {
+    if (!user?.id_docente) {
+      setErrorMessage("El usuario autenticado no tiene docente asociado.");
+      setIsLoadingTutorias(false);
+      return;
     }
 
-    loadTutorias();
-  }, []);
+    try {
+      setIsLoadingTutorias(true);
+      setErrorMessage("");
+
+      const response = await tutoriasApi.listarSolicitudesDocente(
+        user.id_docente
+      );
+
+      const tutoriasValidas = response.data.filter(
+        (tutoria) =>
+          tutoria.estado === "CONFIRMADA" || tutoria.estado === "ATENDIDA"
+      );
+
+      setTutorias(tutoriasValidas);
+    } catch (error) {
+      const apiError = error as ApiResponse<unknown>;
+
+      logApiTrace(apiError);
+      setErrorMessage(getApiErrorMessage(apiError));
+    } finally {
+      setIsLoadingTutorias(false);
+    }
+  }
+
+  loadTutorias();
+ }, [user]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -60,8 +70,7 @@ export function BitacoraForm() {
     try {
       setIsSubmitting(true);
 
-      await tutoriasApi.crearBitacora({
-        id_tutoria: Number(idTutoria),
+      await tutoriasApi.registrarBitacora(Number(idTutoria),{
         observaciones,
         recomendaciones,
         asistencia_estudiante: asistenciaEstudiante,

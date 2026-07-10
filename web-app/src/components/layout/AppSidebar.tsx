@@ -25,18 +25,28 @@ const MENU_ITEMS: MenuItem[] = [
     roles: ["ADMIN", "COORDINADOR"],
   },
   {
-    label: "Usuarios",
-    href: APP_ROUTES.ADMIN_USUARIOS,
-    roles: ["ADMIN"],
-  },
-  {
-    label: "Roles",
-    href: APP_ROUTES.ADMIN_ROLES,
-    roles: ["ADMIN"],
-  },
-  {
     label: "Académico",
     href: APP_ROUTES.ADMIN_ACADEMICO,
+    roles: ["ADMIN", "COORDINADOR"],
+  },
+  {
+    label: "Carreras",
+    href: APP_ROUTES.ADMIN_CARRERAS,
+    roles: ["ADMIN", "COORDINADOR"],
+  },
+  {
+    label: "Asignaturas",
+    href: APP_ROUTES.ADMIN_ASIGNATURAS,
+    roles: ["ADMIN", "COORDINADOR"],
+  },
+  {
+    label: "Docentes",
+    href: APP_ROUTES.ADMIN_DOCENTES,
+    roles: ["ADMIN", "COORDINADOR"],
+  },
+  {
+    label: "Horarios",
+    href: APP_ROUTES.ADMIN_HORARIOS,
     roles: ["ADMIN", "COORDINADOR"],
   },
   {
@@ -45,12 +55,12 @@ const MENU_ITEMS: MenuItem[] = [
     roles: ["ESTUDIANTE"],
   },
   {
-    label: "Historial de tutorías",
+    label: "Mis solicitudes",
     href: APP_ROUTES.ESTUDIANTE_HISTORIAL,
     roles: ["ESTUDIANTE"],
   },
   {
-    label: "Solicitudes asignadas",
+    label: "Solicitudes docente",
     href: APP_ROUTES.DOCENTE_SOLICITUDES,
     roles: ["DOCENTE"],
   },
@@ -63,11 +73,6 @@ const MENU_ITEMS: MenuItem[] = [
     label: "Chat IA",
     href: APP_ROUTES.IA_CHAT,
     roles: ["ADMIN", "COORDINADOR", "DOCENTE", "ESTUDIANTE"],
-  },
-  {
-    label: "Reportes",
-    href: APP_ROUTES.REPORTES,
-    roles: ["ADMIN", "COORDINADOR"],
   },
 ];
 
@@ -96,13 +101,14 @@ export function AppSidebar() {
         <span>UG</span>
         <div>
           <strong>Tutorías IA</strong>
-          <small>Frontend</small>
+          <small>MVP Frontend</small>
         </div>
       </div>
 
       <nav className="sidebar-nav">
         {visibleItems.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive =
+            pathname === item.href || pathname.startsWith(`${item.href}/`);
 
           return (
             <Link

@@ -2,80 +2,34 @@ import { apiClient } from "@/lib/api/apiClient";
 import {
   Asignatura,
   Carrera,
-  CrearAsignaturaRequest,
-  CrearCarreraRequest,
-  CrearDocenteRequest,
-  CrearEstudianteRequest,
-  CrearFacultadRequest,
-  CrearHorarioDocenteRequest,
+  CrearHorarioRequest,
   Docente,
-  Estudiante,
-  Facultad,
   HorarioDocente,
 } from "@/types/academico.types";
 
 export const academicoApi = {
-  listarFacultades() {
-    return apiClient.get<Facultad[]>("/facultades");
-  },
-
-  crearFacultad(payload: CrearFacultadRequest) {
-    return apiClient.post<Facultad, CrearFacultadRequest>(
-      "/facultades",
-      payload
-    );
-  },
-
   listarCarreras() {
-    return apiClient.get<Carrera[]>("/carreras");
-  },
-
-  crearCarrera(payload: CrearCarreraRequest) {
-    return apiClient.post<Carrera, CrearCarreraRequest>("/carreras", payload);
+    return apiClient.get<Carrera[]>("/academico/carreras");
   },
 
   listarAsignaturas() {
-    return apiClient.get<Asignatura[]>("/asignaturas");
-  },
-
-  crearAsignatura(payload: CrearAsignaturaRequest) {
-    return apiClient.post<Asignatura, CrearAsignaturaRequest>(
-      "/asignaturas",
-      payload
-    );
+    return apiClient.get<Asignatura[]>("/academico/asignaturas");
   },
 
   listarDocentes() {
-    return apiClient.get<Docente[]>("/docentes");
-  },
-
-  crearDocente(payload: CrearDocenteRequest) {
-    return apiClient.post<Docente, CrearDocenteRequest>("/docentes", payload);
-  },
-
-  listarEstudiantes() {
-    return apiClient.get<Estudiante[]>("/estudiantes");
-  },
-
-  crearEstudiante(payload: CrearEstudianteRequest) {
-    return apiClient.post<Estudiante, CrearEstudianteRequest>(
-      "/estudiantes",
-      payload
-    );
-  },
-
-  listarHorarios() {
-    return apiClient.get<HorarioDocente[]>("/horarios-docente");
-  },
-
-  crearHorarioDocente(payload: CrearHorarioDocenteRequest) {
-    return apiClient.post<HorarioDocente, CrearHorarioDocenteRequest>(
-      "/horarios-docente",
-      payload
-    );
+    return apiClient.get<Docente[]>("/academico/docentes");
   },
 
   listarHorariosDocente(idDocente: number) {
-    return apiClient.get<HorarioDocente[]>(`/docentes/${idDocente}/horarios`);
+    return apiClient.get<HorarioDocente[]>(
+      `/academico/docentes/${idDocente}/horarios`
+    );
+  },
+
+  crearHorario(payload: CrearHorarioRequest) {
+    return apiClient.post<HorarioDocente, CrearHorarioRequest>(
+      "/academico/horarios",
+      payload
+    );
   },
 };
