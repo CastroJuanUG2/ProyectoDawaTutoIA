@@ -11,8 +11,7 @@ export default function UsuariosPage() {
           <span className="section-label">Módulo pausado</span>
           <h2>Usuarios fuera del MVP</h2>
           <p>
-            La gestión de usuarios no se trabajará en el primer prototipo porque
-            no está dentro de los endpoints mínimos definidos.
+            Gestión directa de usuarios.
           </p>
 
           <Link href={APP_ROUTES.ADMIN} className="module-card">

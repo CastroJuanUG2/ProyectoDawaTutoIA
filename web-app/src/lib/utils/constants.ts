@@ -9,6 +9,7 @@ export const APP_ROUTES = {
   ADMIN_ASIGNATURAS: "/admin/academico/asignaturas",
   ADMIN_DOCENTES: "/admin/academico/docentes",
   ADMIN_HORARIOS: "/admin/academico/horarios",
+  ADMIN_ASIGNAR_TUTORIA: "/admin/tutorias/asignar",
 
   ESTUDIANTE: "/estudiante",
   ESTUDIANTE_SOLICITAR_TUTORIA: "/estudiante/tutorias/solicitar",

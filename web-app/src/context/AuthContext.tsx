@@ -11,9 +11,10 @@ import { authApi } from "@/lib/api/auth.api";
 import { AuthUser, LoginRequest } from "@/types/auth.types";
 import {
   clearAuthStorage,
-  getAuthUser,
+  getAuthSession,
   getToken,
-  saveAuthUser,
+  isTokenExpired,
+  saveAuthSession,
   saveToken,
 } from "@/lib/auth/authStorage";
 import { getDefaultRouteByRole } from "@/lib/auth/permissions";
@@ -25,6 +26,7 @@ interface AuthContextValue {
   isLoading: boolean;
   login: (payload: LoginRequest) => Promise<string>;
   logout: () => Promise<void>;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -40,28 +42,36 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
     async function loadSession() {
-      const storedToken = getToken();
-      const storedUser = getAuthUser<AuthUser>();
+      const storedSession = getAuthSession();
 
-      if (!storedToken) {
+      if (!storedSession) {
+        clearAuthStorage();
+        setUser(null);
+        setToken(null);
         setIsLoading(false);
         return;
       }
 
-      setToken(storedToken);
-
-      if (storedUser) {
-        setUser(storedUser);
+      if (isTokenExpired(storedSession.token)) {
+        clearAuthStorage();
+        setUser(null);
+        setToken(null);
+        setIsLoading(false);
+        return;
       }
+
+      setToken(storedSession.token);
+      setUser(storedSession.user);
 
       try {
         const response = await authApi.me();
+
+        saveAuthSession(storedSession.token, response.data);
         setUser(response.data);
-        saveAuthUser(response.data);
       } catch {
         clearAuthStorage();
-        setToken(null);
         setUser(null);
+        setToken(null);
       } finally {
         setIsLoading(false);
       }
@@ -71,18 +81,44 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   async function login(payload: LoginRequest): Promise<string> {
-    const response = await authApi.login(payload);
+    const loginResponse = await authApi.login(payload);
 
-    const accessToken = response.data.access_token;
-    const authUser = response.data.usuario;
+    const accessToken = loginResponse.data.access_token;
 
     saveToken(accessToken);
-    saveAuthUser(authUser);
-
     setToken(accessToken);
-    setUser(authUser);
 
-    return getDefaultRouteByRole(authUser.roles);
+    try {
+      const meResponse = await authApi.me();
+      const authUser = meResponse.data;
+
+      saveAuthSession(accessToken, authUser);
+      setUser(authUser);
+
+      return getDefaultRouteByRole(authUser.roles);
+    } catch (error) {
+      clearAuthStorage();
+      setUser(null);
+      setToken(null);
+      throw error;
+    }
+  }
+
+  async function refreshUser(): Promise<void> {
+    const currentToken = getToken();
+
+    if (!currentToken || isTokenExpired(currentToken)) {
+      clearAuthStorage();
+      setUser(null);
+      setToken(null);
+      return;
+    }
+
+    const response = await authApi.me();
+
+    saveAuthSession(currentToken, response.data);
+    setUser(response.data);
+    setToken(currentToken);
   }
 
   async function logout(): Promise<void> {
@@ -106,6 +142,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         isLoading,
         login,
         logout,
+        refreshUser,
       }}
     >
       {children}

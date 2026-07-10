@@ -55,6 +55,11 @@ const MENU_ITEMS: MenuItem[] = [
     roles: ["ESTUDIANTE"],
   },
   {
+  label: "Asignar tutoría",
+  href: APP_ROUTES.ADMIN_ASIGNAR_TUTORIA,
+  roles: ["ADMIN", "COORDINADOR"],
+  },
+  {
     label: "Mis solicitudes",
     href: APP_ROUTES.ESTUDIANTE_HISTORIAL,
     roles: ["ESTUDIANTE"],

@@ -1553,3 +1553,69 @@ input {
   color: #4b5563;
   text-align: center;
 }
+
+.asignar-tutoria-manager {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.selected-request {
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 18px;
+}
+
+.selected-request p {
+  margin: 0 0 8px;
+  color: #374151;
+}
+
+.selected-request p:last-child {
+  margin-bottom: 0;
+}
+
+.action-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.result-box {
+  margin-top: 16px;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.result-box h4 {
+  margin: 0 0 10px;
+  color: #111827;
+}
+
+.result-box p {
+  margin: 0 0 8px;
+  color: #374151;
+  line-height: 1.5;
+}
+
+.result-box p:last-child {
+  margin-bottom: 0;
+}
+
+.table-select-button {
+  border: none;
+  border-radius: 10px;
+  background: #dbeafe;
+  color: #1d4ed8;
+  padding: 8px 10px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.table-select-button:hover {
+  background: #bfdbfe;
+}

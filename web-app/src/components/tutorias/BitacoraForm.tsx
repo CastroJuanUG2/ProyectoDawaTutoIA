@@ -1,20 +1,20 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
+import { useAuth } from "@/context/AuthContext";
 import { tutoriasApi } from "@/lib/api/tutorias.api";
 import { Tutoria } from "@/types/tutoria.types";
-import { ApiResponse } from "@/types/api.types";
 import { getApiErrorMessage, logApiTrace } from "@/lib/utils/handleApiError";
 import { Button } from "@/components/ui/Button";
-import { useAuth } from "@/context/AuthContext";
 
 export function BitacoraForm() {
+  const { user } = useAuth();
+
   const [tutorias, setTutorias] = useState<Tutoria[]>([]);
   const [idTutoria, setIdTutoria] = useState("");
   const [observaciones, setObservaciones] = useState("");
   const [recomendaciones, setRecomendaciones] = useState("");
   const [asistenciaEstudiante, setAsistenciaEstudiante] = useState(true);
-  cont { user } = useAuth();
 
   const [isLoadingTutorias, setIsLoadingTutorias] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -22,39 +22,38 @@ export function BitacoraForm() {
   const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
-  async function loadTutorias() {
-    if (!user?.id_docente) {
-      setErrorMessage("El usuario autenticado no tiene docente asociado.");
-      setIsLoadingTutorias(false);
-      return;
+    async function loadTutorias() {
+      if (!user?.id_docente) {
+        setErrorMessage("El usuario autenticado no tiene docente asociado.");
+        setIsLoadingTutorias(false);
+        return;
+      }
+
+      try {
+        setIsLoadingTutorias(true);
+        setErrorMessage("");
+
+        const response = await tutoriasApi.listarSolicitudesDocente(
+          user.id_docente
+        );
+
+        const tutoriasValidas = response.data.filter(
+          (tutoria) =>
+            tutoria.estado === "CONFIRMADA" ||
+            tutoria.estado === "ATENDIDA"
+        );
+
+        setTutorias(tutoriasValidas);
+      } catch (error) {
+        logApiTrace(error);
+        setErrorMessage(getApiErrorMessage(error));
+      } finally {
+        setIsLoadingTutorias(false);
+      }
     }
 
-    try {
-      setIsLoadingTutorias(true);
-      setErrorMessage("");
-
-      const response = await tutoriasApi.listarSolicitudesDocente(
-        user.id_docente
-      );
-
-      const tutoriasValidas = response.data.filter(
-        (tutoria) =>
-          tutoria.estado === "CONFIRMADA" || tutoria.estado === "ATENDIDA"
-      );
-
-      setTutorias(tutoriasValidas);
-    } catch (error) {
-      const apiError = error as ApiResponse<unknown>;
-
-      logApiTrace(apiError);
-      setErrorMessage(getApiErrorMessage(apiError));
-    } finally {
-      setIsLoadingTutorias(false);
-    }
-  }
-
-  loadTutorias();
- }, [user]);
+    loadTutorias();
+  }, [user]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -70,7 +69,7 @@ export function BitacoraForm() {
     try {
       setIsSubmitting(true);
 
-      await tutoriasApi.registrarBitacora(Number(idTutoria),{
+      await tutoriasApi.registrarBitacora(Number(idTutoria), {
         observaciones,
         recomendaciones,
         asistencia_estudiante: asistenciaEstudiante,
@@ -83,10 +82,8 @@ export function BitacoraForm() {
       setRecomendaciones("");
       setAsistenciaEstudiante(true);
     } catch (error) {
-      const apiError = error as ApiResponse<unknown>;
-
-      logApiTrace(apiError);
-      setErrorMessage(getApiErrorMessage(apiError));
+      logApiTrace(error);
+      setErrorMessage(getApiErrorMessage(error));
     } finally {
       setIsSubmitting(false);
     }
@@ -98,7 +95,7 @@ export function BitacoraForm() {
       {successMessage && <div className="form-success">{successMessage}</div>}
 
       <div className="input-group">
-        <label className="input-label">Tutoría atendida</label>
+        <label className="input-label">Tutoría</label>
 
         <select
           className="app-input"
@@ -121,7 +118,7 @@ export function BitacoraForm() {
       </div>
 
       <div className="input-group">
-        <label className="input-label">Observaciones del docente</label>
+        <label className="input-label">Observaciones</label>
         <textarea
           className="app-input app-textarea"
           value={observaciones}
@@ -132,12 +129,12 @@ export function BitacoraForm() {
       </div>
 
       <div className="input-group">
-        <label className="input-label">Recomendaciones académicas</label>
+        <label className="input-label">Recomendaciones</label>
         <textarea
           className="app-input app-textarea"
           value={recomendaciones}
           onChange={(event) => setRecomendaciones(event.target.value)}
-          placeholder="Registre recomendaciones, tareas o pasos sugeridos."
+          placeholder="Registre recomendaciones académicas."
           rows={5}
         />
       </div>

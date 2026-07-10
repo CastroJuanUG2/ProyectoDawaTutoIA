@@ -38,10 +38,9 @@ export function LoginForm() {
 
       router.push(redirectTo);
     } catch (error) {
-      const apiError = error as ApiResponse<unknown>;
 
-      logApiTrace(apiError);
-      setFormError(getApiErrorMessage(apiError));
+      logApiTrace(error);
+      setFormError(getApiErrorMessage(error));
     } finally {
       setIsSubmitting(false);
     }

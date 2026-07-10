@@ -1,54 +1,52 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useAuth } from "@/context/AuthContext";
 import { tutoriasApi } from "@/lib/api/tutorias.api";
-import { EstadoTutoria, Tutoria } from "@/types/tutoria.types";
-import { ApiResponse } from "@/types/api.types";
+import { Tutoria } from "@/types/tutoria.types";
 import { getApiErrorMessage, logApiTrace } from "@/lib/utils/handleApiError";
 import { formatDate } from "@/lib/utils/formatDate";
 import { Table } from "@/components/ui/Table";
 import { Loading } from "@/components/ui/Loading";
 import { Button } from "@/components/ui/Button";
 import { TutoriaEstadoBadge } from "@/components/tutorias/TutoriaEstadoBadge";
-import { useAuth } from "@/context/AuthContext";
 
 export function SolicitudesDocenteList() {
+  const { user } = useAuth();
+
   const [tutorias, setTutorias] = useState<Tutoria[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState<number | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  cont { user } = useAuth()
 
   useEffect(() => {
+    async function loadTutoriasDocente() {
+      if (!user?.id_docente) {
+        setErrorMessage("El usuario autenticado no tiene docente asociado.");
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        setIsLoading(true);
+        setErrorMessage("");
+
+        const response = await tutoriasApi.listarSolicitudesDocente(
+          user.id_docente
+        );
+
+        setTutorias(response.data);
+      } catch (error) {
+        logApiTrace(error);
+        setErrorMessage(getApiErrorMessage(error));
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
     loadTutoriasDocente();
   }, [user]);
-
-  async function loadTutoriasDocente() {
-    if (!user?.id_docente) {
-      setErrorMessage("El usuario autenticado no tiene docente asociado.");
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      setErrorMessage("");
-
-      const response = await tutoriasApi.listarSolicitudesDocente(
-        user.id_docente
-      );
-
-      setTutorias(response.data);
-    } catch (error) {
-      const apiError = error as ApiResponse<unknown>;
-
-      logApiTrace(apiError);
-      setErrorMessage(getApiErrorMessage(apiError));
-    } finally {
-      setIsLoading(false);
-    }
-  }
 
   async function handleConfirmar(idTutoria: number) {
     try {
@@ -64,44 +62,40 @@ export function SolicitudesDocenteList() {
         )
       );
 
-      setSuccessMessage(`Tutoría confirmada`);
+      setSuccessMessage("Tutoría confirmada correctamente.");
     } catch (error) {
-      const apiError = error as ApiResponse<unknown>;
-
-      logApiTrace(apiError);
-      setErrorMessage(getApiErrorMessage(apiError));
+      logApiTrace(error);
+      setErrorMessage(getApiErrorMessage(error));
     } finally {
       setUpdatingId(null);
     }
   }
 
   async function handleCancelar(idTutoria: number) {
-  try {
-    setUpdatingId(idTutoria);
-    setErrorMessage("");
-    setSuccessMessage("");
+    try {
+      setUpdatingId(idTutoria);
+      setErrorMessage("");
+      setSuccessMessage("");
 
-    const response = await tutoriasApi.cancelarTutoria(idTutoria);
+      const response = await tutoriasApi.cancelarTutoria(idTutoria);
 
-    setTutorias((currentTutorias) =>
-      currentTutorias.map((tutoria) =>
-        tutoria.id_tutoria === idTutoria ? response.data : tutoria
-      )
-    );
+      setTutorias((currentTutorias) =>
+        currentTutorias.map((tutoria) =>
+          tutoria.id_tutoria === idTutoria ? response.data : tutoria
+        )
+      );
 
-    setSuccessMessage("Tutoría cancelada correctamente.");
-  } catch (error) {
-    const apiError = error as ApiResponse<unknown>;
-
-    logApiTrace(apiError);
-    setErrorMessage(getApiErrorMessage(apiError));
-  } finally {
-    setUpdatingId(null);
+      setSuccessMessage("Tutoría cancelada correctamente.");
+    } catch (error) {
+      logApiTrace(error);
+      setErrorMessage(getApiErrorMessage(error));
+    } finally {
+      setUpdatingId(null);
+    }
   }
-}
 
   if (isLoading) {
-    return <Loading text="Cargando tutorías asignadas..." />;
+    return <Loading text="Cargando solicitudes del docente..." />;
   }
 
   return (
@@ -111,9 +105,9 @@ export function SolicitudesDocenteList() {
 
       <Table<Tutoria>
         data={tutorias}
-        emptyMessage="No tienes tutorías asignadas por el momento."
+        emptyMessage="No tienes solicitudes asignadas por el momento."
         columns={[
-          { header: "ID", accessor: "id_tutoria" },
+          { header: "ID Tutoría", accessor: "id_tutoria" },
           { header: "Tema", accessor: "tema" },
           { header: "Asignatura", accessor: "id_asignatura" },
           {
@@ -146,28 +140,13 @@ export function SolicitudesDocenteList() {
 
                 <Button
                   type="button"
-                  className="small-button"
-                  disabled={
-                    updatingId === row.id_tutoria ||
-                    row.estado === "ATENDIDA" ||
-                    row.estado === "CANCELADA"
-                  }
-                  onClick={() => handleCancelar(row.id_tutoria)}
-                >
-                  Atendida
-                </Button>
-
-                <Button
-                  type="button"
                   className="small-button danger-button"
                   disabled={
                     updatingId === row.id_tutoria ||
                     row.estado === "ATENDIDA" ||
                     row.estado === "CANCELADA"
                   }
-                  onClick={() =>
-                    handleCambiarEstado(row.id_tutoria, "CANCELADA")
-                  }
+                  onClick={() => handleCancelar(row.id_tutoria)}
                 >
                   Cancelar
                 </Button>

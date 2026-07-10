@@ -12,10 +12,11 @@ import { TutoriaEstadoBadge } from "@/components/tutorias/TutoriaEstadoBadge";
 import { useAuth } from "@/context/AuthContext";
 
 export function MisSolicitudesList() {
+  const { user } = useAuth();
   const [solicitudes, setSolicitudes] = useState<SolicitudTutoria[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
-  const { user } = useAuth();
+
 
   useEffect(() => {
       async function loadSolicitudes() {
