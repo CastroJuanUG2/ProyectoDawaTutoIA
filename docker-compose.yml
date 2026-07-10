@@ -1,0 +1,59 @@
+services:
+  postgres-db:
+    image: postgres:17
+    container_name: dawa-postgres-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5435:5432"
+    volumes:
+      - dawa_postgres_data:/var/lib/postgresql/data
+      - ./database/scripts:/scripts
+    networks:
+      - dawa-network
+
+  backend-flask:
+    build:
+      context: ./backend-flask
+      dockerfile: Dockerfile
+    container_name: dawa-backend-flask
+    restart: unless-stopped
+    ports:
+      - "3012:3013"
+    environment:
+      FLASK_ENV: development
+      FLASK_DEBUG: "True"
+
+      APP_HOST: 0.0.0.0
+      APP_PORT: 3013
+      API_PREFIX: /api/v1
+      SERVICE_NAME: backend-flask
+
+      DB_HOST: postgres-db
+      DB_PORT: 5432
+      DB_NAME: dawa_tutorias_ia_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_SCHEMA: dawa
+
+      JWT_SECRET_KEY: dev_secret_key_dawa_tutorias_ia
+      JWT_ALGORITHM: HS256
+      JWT_EXPIRES_MINUTES: 120
+
+      SECURITY_SERVICE_URL: http://seguridad:3015/api/v1
+      ACADEMIC_SERVICE_URL: http://servicio-administrador-acad:3017/api/v1
+      TUTORING_SERVICE_URL: http://servicio-tutoria:3019/api/v1
+      IA_SERVICE_URL: http://servicio-agente-ia:3021/api/v1
+    depends_on:
+      - postgres-db
+    networks:
+      - dawa-network
+
+volumes:
+  dawa_postgres_data:
+
+networks:
+  dawa-network:
+    driver: bridge
