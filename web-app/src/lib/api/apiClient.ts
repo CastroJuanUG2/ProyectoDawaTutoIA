@@ -6,10 +6,16 @@ import {
 } from "@/lib/auth/authStorage";
 import { ApiRequestOptions, ApiResponse } from "@/types/api.types";
 
-const API_GATEWAY_URL = process.env.NEXT_PUBLIC_API_GATEWAY_URL;
+function getApiGatewayUrl(): string {
+  const apiGatewayUrl = process.env.NEXT_PUBLIC_API_GATEWAY_URL;
 
-if (!API_GATEWAY_URL) {
-  throw new Error("La variable NEXT_PUBLIC_API_GATEWAY_URL no está configurada.");
+  if (!apiGatewayUrl) {
+    throw new Error(
+      "La variable NEXT_PUBLIC_API_GATEWAY_URL no está configurada."
+    );
+  }
+
+  return apiGatewayUrl;
 }
 
 function buildUrl(endpoint: string): string {
@@ -17,7 +23,7 @@ function buildUrl(endpoint: string): string {
     ? endpoint
     : `/${endpoint}`;
 
-  return `${API_GATEWAY_URL}${normalizedEndpoint}`;
+  return `${getApiGatewayUrl()}${normalizedEndpoint}`;
 }
 
 function redirectToLogin(): void {
@@ -91,15 +97,16 @@ async function request<T>(
     );
   }
 
-  const requestHeaders: HeadersInit = {
-    "Content-Type": "application/json",
-    ...headers,
-  };
+  const requestHeaders = new Headers(headers);
+
+  if (!requestHeaders.has("Content-Type")) {
+    requestHeaders.set("Content-Type", "application/json");
+  }
 
   const bearerToken = getBearerToken();
 
   if (auth && bearerToken) {
-    requestHeaders.Authorization = bearerToken;
+    requestHeaders.set("Authorization", bearerToken);
   }
 
   try {
@@ -170,7 +177,7 @@ export const apiClient = {
     return request<T>(endpoint, {
       ...options,
       method: "POST",
-      body: body ? JSON.stringify(body) : undefined,
+      body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   },
 
@@ -182,7 +189,7 @@ export const apiClient = {
     return request<T>(endpoint, {
       ...options,
       method: "PUT",
-      body: body ? JSON.stringify(body) : undefined,
+      body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   },
 
@@ -194,7 +201,7 @@ export const apiClient = {
     return request<T>(endpoint, {
       ...options,
       method: "PATCH",
-      body: body ? JSON.stringify(body) : undefined,
+      body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   },
 
