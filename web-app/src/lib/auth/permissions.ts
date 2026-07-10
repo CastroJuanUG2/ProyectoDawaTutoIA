@@ -1,11 +1,24 @@
 import { UserRole } from "@/types/auth.types";
 import { APP_ROUTES } from "@/lib/utils/constants";
 
-export function hasRole(userRoles: UserRole[], allowedRoles: UserRole[]): boolean {
+export function hasRole(
+  userRoles: UserRole[] | undefined | null,
+  allowedRoles: UserRole[]
+): boolean {
+  if (!Array.isArray(userRoles)) {
+    return false;
+  }
+
   return userRoles.some((role) => allowedRoles.includes(role));
 }
 
-export function getDefaultRouteByRole(roles: UserRole[]): string {
+export function getDefaultRouteByRole(
+  roles: UserRole[] | undefined | null
+): string {
+  if (!Array.isArray(roles)) {
+    return APP_ROUTES.DASHBOARD;
+  }
+
   if (roles.includes("ADMIN") || roles.includes("COORDINADOR")) {
     return APP_ROUTES.ADMIN;
   }
