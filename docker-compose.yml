@@ -1,9 +1,12 @@
 services:
   postgres-db:
-    image: postgres:17
+    build:
+      context: ./database
+      dockerfile: Dockerfile
     container_name: dawa-postgres-db
     restart: unless-stopped
     environment:
+      POSTGRES_DB: dawa_tutorias_ia_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
